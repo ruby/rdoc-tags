@@ -1,0 +1,8 @@
+.autotest
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+lib/rdoc/discover.rb
+lib/rdoc/generator/tags.rb
+test/test_rdoc_generator_tags.rb
