@@ -16,6 +16,8 @@ Hoe.spec 'rdoc-tags' do
   extra_dev_deps << ['isolate', '~> 3']
 
   self.isolate_dir = 'tmp/isolate'
+  self.rdoc_locations =
+    'drbrain@rubyforge.org:/var/www/gforge-projects/rdoc/rdoc-tags'
 end
 
 # vim: syntax=Ruby
