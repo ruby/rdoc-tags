@@ -1,4 +1,4 @@
-= rdoc_tags
+= rdoc-tags
 
 * https://github.com/rdoc/rdoc-tags
 
@@ -7,6 +7,10 @@
 A TAGS file generator based on http://ctags.sourceforge.net/FORMAT.  rdoc-tags
 handles namespaced classes and modules, ! and ? methods, constants and
 attributes better than Exuberant Ctags.
+
+rdoc-tags includes a Hoe plugin +:rdoc_tags+ making it easy to add tag support
+to your ruby project.  If you don't use Hoe you can instead use RDoc::TagsTask
+to add rake tasks for building TAGS to your ruby project.
 
 == FEATURES/PROBLEMS:
 

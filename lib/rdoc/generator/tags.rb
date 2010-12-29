@@ -9,7 +9,7 @@ class RDoc::Generator::Tags
   ##
   # The version of the tags generator you are using
 
-  VERSION = '1.0'
+  VERSION = '1.1'
 
   RDoc::RDoc.add_generator self
 
