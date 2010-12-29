@@ -6,6 +6,7 @@ require 'hoe'
 Hoe.plugin :git
 Hoe.plugin :isolate
 Hoe.plugin :minitest
+Hoe.plugin :rdoc_tags
 Hoe.plugins.delete :rubyforge
 
 Hoe.spec 'rdoc-tags' do
@@ -14,7 +15,7 @@ Hoe.spec 'rdoc-tags' do
   extra_deps << ['rdoc', '~> 3']
   extra_dev_deps << ['isolate', '~> 3']
 
-  self.isolate_dir = 'tmp/isolated'
+  self.isolate_dir = 'tmp/isolate'
 end
 
 # vim: syntax=Ruby

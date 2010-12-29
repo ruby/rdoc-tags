@@ -1,3 +1,9 @@
+=== 1.1 / ??
+
+* Minor enhancements
+  * Added RDoc::TagsTask which generates a TAGS file
+  * Added +:rdoc_tags+ plugin for Hoe
+
 === 1.0 / 2010-12-23
 
 * 1 major enhancement

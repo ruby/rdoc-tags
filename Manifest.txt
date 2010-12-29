@@ -3,6 +3,8 @@ History.txt
 Manifest.txt
 README.txt
 Rakefile
+lib/hoe/rdoc_tags.rb
 lib/rdoc/discover.rb
 lib/rdoc/generator/tags.rb
+lib/rdoc/tags_task.rb
 test/test_rdoc_generator_tags.rb
