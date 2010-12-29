@@ -1,4 +1,4 @@
-=== 1.1 / ??
+=== 1.1 / 2010-12-29
 
 * Minor enhancements
   * Added RDoc::TagsTask which generates a TAGS file
