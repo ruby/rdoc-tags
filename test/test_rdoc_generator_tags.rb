@@ -54,6 +54,10 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
     @klass.add_method @meth_bang
     @klass.add_attribute @attr
     @klass.add_constant @const
+
+    @top_level_2 = RDoc::TopLevel.new 'file_2.rb'
+    @A_B_A = @B.add_class RDoc::NormalClass, 'A'
+    @A_B_A.record_location @top_level_2
   end
 
   def teardown
@@ -145,11 +149,15 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
     assert_equal "!_TAG_PROGRAM_VERSION\t#{RDoc::Generator::Tags::VERSION}\n",
                  tags.next
 
-    assert_equal "A\tfile.rb\t/class A/;\"\tc\n",                tags.next
-    assert_equal "A::B\tfile.rb\t/class \\(A::\\)\\?B/;\"\tc\n", tags.next
-    assert_equal "B\tfile.rb\t/class \\(A::\\)\\?B/;\"\tc\n",    tags.next
+    assert_equal "A\tfile.rb\t/class A/;\"\tc\n",                  tags.next
+    assert_equal "A\tfile_2.rb\t/class \\(A::B::\\)\\?A/;\"\tc\n", tags.next
+    assert_equal "A::B\tfile.rb\t/class \\(A::\\)\\?B/;\"\tc\n",   tags.next
+    assert_equal "A::B::A\tfile_2.rb\t/class \\(A::B::\\)\\?A/;\"\tc\n",
+                 tags.next
+    assert_equal "B\tfile.rb\t/class \\(A::\\)\\?B/;\"\tc\n",      tags.next
 
-    assert_equal "CONST\tfile.rb\t/CONST\\s\\*=/;\"\td\tclass:Object\n", tags.next
+    assert_equal "CONST\tfile.rb\t/CONST\\s\\*=/;\"\td\tclass:Object\n",
+                 tags.next
 
     assert_equal "Object\tfile.rb\t/class Object/;\"\tc\n", tags.next
 

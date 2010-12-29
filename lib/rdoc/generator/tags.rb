@@ -61,7 +61,7 @@ class RDoc::Generator::Tags
   def initialize options
     @options = options
     @dry_run = options.dry_run
-    @tags = {}
+    @tags = Hash.new { |h, name| h[name] = [] }
   end
 
   ##
@@ -69,7 +69,7 @@ class RDoc::Generator::Tags
 
   def generate top_levels
     top_levels.each do |top_level|
-      @tags[top_level.relative_name] = [top_level.relative_name, 0, 'F']
+      @tags[top_level.relative_name] << [top_level.relative_name, 0, 'F']
     end
 
     RDoc::TopLevel.all_classes_and_modules.each do |klass|
@@ -83,8 +83,8 @@ class RDoc::Generator::Tags
         end
 
       klass.in_files.each do |file|
-        @tags[klass.full_name] = [file.relative_name, address, 'c']
-        @tags[klass.name]      = [file.relative_name, address, 'c']
+        @tags[klass.full_name] << [file.relative_name, address, 'c']
+        @tags[klass.name]      << [file.relative_name, address, 'c']
       end
 
       klass.each_attribute do |attr|
@@ -95,12 +95,12 @@ class RDoc::Generator::Tags
           kind
         ]
         
-        @tags[attr.name]       = where
-        @tags["#{attr.name}="] = where
+        @tags[attr.name]       << where
+        @tags["#{attr.name}="] << where
       end
 
       klass.each_constant do |constant|
-        @tags[constant.name] = [
+        @tags[constant.name] << [
           constant.file.relative_name, "/#{constant.name}\\s\\*=/", 'd', kind]
       end
 
@@ -112,7 +112,7 @@ class RDoc::Generator::Tags
                     "/def #{method.name}/"
                   end
 
-        @tags[method.name] = [
+        @tags[method.name] << [
           method.file.relative_name, address, 'f', kind]
       end
     end
@@ -134,8 +134,10 @@ class RDoc::Generator::Tags
 !_TAG_PROGRAM_VERSION\t#{VERSION}
       INFO
 
-      @tags.sort.each do |name, (file, address, *field)|
-        io.write "#{name}\t#{file}\t#{address};\"\t#{field.join "\t"}\n"
+      @tags.sort.each do |name, definitions|
+        definitions.uniq.each do |(file, address, *field)|
+          io.write "#{name}\t#{file}\t#{address};\"\t#{field.join "\t"}\n"
+        end
       end
     end
   end

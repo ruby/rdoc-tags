@@ -3,6 +3,9 @@
 * Minor enhancements
   * Added RDoc::TagsTask which generates a TAGS file
   * Added +:rdoc_tags+ plugin for Hoe
+* Bug fix
+  * Multiple tags are now generated for definitions across more than one file.
+    Bug #1 by postmodern.
 
 === 1.0 / 2010-12-23
 
