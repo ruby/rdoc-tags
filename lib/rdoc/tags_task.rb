@@ -74,15 +74,6 @@ class RDoc::TagsTask < Rake::TaskLib
   # Builds the TAGS file.
 
   def build_tags
-    args = [
-      '-f', 'tags',
-      '-q',
-      '--tag-style', @tag_style,
-      '-o', @tags_dir,
-    ]
-
-    args += @files
-
     begin
       gem 'rdoc'
     rescue Gem::LoadError
@@ -90,9 +81,22 @@ class RDoc::TagsTask < Rake::TaskLib
 
     require 'rdoc/rdoc'
     require 'rdoc/generator/tags'
-    $stderr.puts "rdoc #{args.join ' '}" if Rake.application.options.trace
 
-    RDoc::RDoc.new.document args
+    options = RDoc::Options.new
+    options.files = @files
+    options.update_output_dir = false
+
+    options.op_dir    = @tags_dir
+    options.verbosity = 0
+
+    options.setup_generator 'tags'
+    options.tag_style = @tag_style
+
+    if Rake.application.options.trace then
+      $stderr.puts "rdoc -q -o #{@tags_dir} -f tags #{@files}"
+    end
+
+    RDoc::RDoc.new.document options
   end
 
   ##
@@ -107,7 +111,7 @@ class RDoc::TagsTask < Rake::TaskLib
 
     desc 'Clobber TAGS file'
     task @clobber_task do
-      rm_f tags_path
+      rm_f tags_path, :verbose => Rake.application.options.trace
     end
 
     directory @tags_dir

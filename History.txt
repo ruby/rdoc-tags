@@ -3,6 +3,7 @@
 * Bug Fixes
   * Fixed Hoe plugin to match RDoc::TagsTask arguments.
   * Require rdoc/generator/tags first for RDoc::TagsTask.
+  * The tags generator no longer creates a create.rid file.
 
 === 1.1 / 2010-12-29
 
