@@ -1,3 +1,9 @@
+=== 1.1.1
+
+* Bug Fixes
+  * Fixed Hoe plugin to match RDoc::TagsTask arguments.
+  * Require rdoc/generator/tags first for RDoc::TagsTask.
+
 === 1.1 / 2010-12-29
 
 * Minor enhancements

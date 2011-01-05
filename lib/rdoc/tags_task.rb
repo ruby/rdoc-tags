@@ -89,6 +89,7 @@ class RDoc::TagsTask < Rake::TaskLib
     end
 
     require 'rdoc/rdoc'
+    require 'rdoc/generator/tags'
     $stderr.puts "rdoc #{args.join ' '}" if Rake.application.options.trace
 
     RDoc::RDoc.new.document args

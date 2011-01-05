@@ -1,15 +1,15 @@
-require 'rdoc/rdoc'
-require 'rdoc/generator'
-
 ##
 # A TAGS file generator based on http://ctags.sourceforge.net/FORMAT
+#
+# This file will be automatically loaded via rdoc/discover.rb.  If you wish to
+# load this standalone, require 'rdoc/rdoc' first.
 
 class RDoc::Generator::Tags
 
   ##
   # The version of the tags generator you are using
 
-  VERSION = '1.1'
+  VERSION = '1.1.1'
 
   RDoc::RDoc.add_generator self
 

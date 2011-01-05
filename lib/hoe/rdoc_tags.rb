@@ -24,15 +24,15 @@ module Hoe::RDoc_tags
   # Hoe.
 
   def define_rdoc_tags_tasks
-    tags_style = 'vim'
-
     with_config do |config, _|
-      tags_style = config['tags_style']
+      tag_style = config['tag_style']
     end
+
+    tag_style ||= 'vim'
 
     RDoc::TagsTask.new do |rd|
       rd.files += spec.require_paths
-      rd.tags_style = tags_style
+      rd.tag_style = tag_style
     end
 
     task :clean   => :clobber_tags
