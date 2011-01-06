@@ -199,6 +199,8 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
       @system = args
     end
 
+    @g.instance_variable_set :@system, nil
+
     @g.merge_ctags
 
     assert_nil @g.instance_variable_get :@system
