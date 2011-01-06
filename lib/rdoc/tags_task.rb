@@ -8,6 +8,12 @@ end
 require 'rake'
 require 'rake/tasklib'
 
+begin
+  gem 'rdoc'
+rescue LoadError
+end
+require 'rdoc'
+
 ##
 # Creates rake tasks for building, rebuilding and removing TAGS files.
 #
@@ -74,11 +80,6 @@ class RDoc::TagsTask < Rake::TaskLib
   # Builds the TAGS file.
 
   def build_tags
-    begin
-      gem 'rdoc'
-    rescue Gem::LoadError
-    end
-
     require 'rdoc/rdoc'
     require 'rdoc/generator/tags'
 
