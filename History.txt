@@ -1,5 +1,10 @@
-=== 1.1.1
+=== 1.2
 
+* Minor enhancements
+  * rdoc-tags can now merge with Exuberant Ctags for projects with extensions
+    or other languages.  Use <tt>--ctags-merge</tt> to enable merging.
+    rdoc-tags will discover Exuberant Ctags in your PATH by checking the
+    output of <tt>ctags --version</tt>.
 * Bug Fixes
   * Fixed Hoe plugin to match RDoc::TagsTask arguments.
   * Require rdoc/generator/tags first for RDoc::TagsTask.

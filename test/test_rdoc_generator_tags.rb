@@ -76,7 +76,13 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
 
     assert_equal :vim, options.tag_style
 
+    assert_includes op.top.long, 'ctags-path'
+    assert_includes op.top.long, 'ctags-merge'
     assert_includes op.top.long, 'tag-style'
+  end
+
+  def test_find_ctags
+    assert_equal '/usr/local/bin/ctags', @g.find_ctags
   end
 
   def test_generate_emacs
@@ -139,14 +145,14 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
 
     tags = File.read(tags_file).lines
 
-    assert_equal "!_TAG_FILE_FORMAT\t2\n", tags.next
-    assert_equal "!_TAG_FILE_SORTED\t1\n", tags.next
+    assert_equal "!_TAG_FILE_FORMAT\t2\t/extended format/\n", tags.next
+    assert_equal "!_TAG_FILE_SORTED\t1\t/sorted/\n", tags.next
     assert_equal "!_TAG_PROGRAM_AUTHOR\tEric Hodel\t/drbrain@segment7.net/\n",
                  tags.next
-    assert_equal "!_TAG_PROGRAM_NAME\trdoc-tags\n", tags.next
-    assert_equal "!_TAG_PROGRAM_URL\thttps://github.com/rdoc/rdoc-tags\n",
+    assert_equal "!_TAG_PROGRAM_NAME\trdoc-tags\t//\n", tags.next
+    assert_equal "!_TAG_PROGRAM_URL\thttps://github.com/rdoc/rdoc-tags\t//\n",
                  tags.next
-    assert_equal "!_TAG_PROGRAM_VERSION\t#{RDoc::Generator::Tags::VERSION}\n",
+    assert_equal "!_TAG_PROGRAM_VERSION\t#{RDoc::Generator::Tags::VERSION}\t//\n",
                  tags.next
 
     assert_equal "A\tfile.rb\t/class A/;\"\tc\n",                  tags.next
@@ -186,6 +192,28 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
     @g.generate [@top_level]
 
     refute File.exist? File.join(@tmpdir, 'TAGS')
+  end
+
+  def test_merge_ctags
+    def @g.system(*args)
+      @system = args
+    end
+
+    @g.merge_ctags
+
+    assert_nil @g.instance_variable_get :@system
+
+    @g.ctags_merge = true
+    @g.ctags_path = 'ctags'
+    @options.files = '.'
+
+    @g.merge_ctags
+
+    args = @g.instance_variable_get :@system
+
+    assert_equal %w[ctags
+                    --append=yes --format=2 --languages=-Ruby --recurse=yes
+                    .], args
   end
 
 end
