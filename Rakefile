@@ -16,6 +16,7 @@ Hoe.spec 'rdoc-tags' do
 
   extra_deps << ['rdoc', '~> 3.4'] # don't forget to update rdoc/discover.rb
   extra_dev_deps << ['isolate', '~> 3']
+  extra_dev_deps << ['ZenTest']
 
   self.isolate_dir = 'tmp/isolate'
   self.rdoc_locations =
