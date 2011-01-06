@@ -84,14 +84,13 @@ class RDoc::TagsTask < Rake::TaskLib
     require 'rdoc/generator/tags'
 
     options = RDoc::Options.new
+    options.setup_generator 'tags'
+    options.tag_style = @tag_style
+
     options.files = @files
-    options.update_output_dir = false
 
     options.op_dir    = @tags_dir
     options.verbosity = 0
-
-    options.setup_generator 'tags'
-    options.tag_style = @tag_style
 
     if Rake.application.options.trace then
       $stderr.puts "rdoc -q -o #{@tags_dir} -f tags #{@files}"

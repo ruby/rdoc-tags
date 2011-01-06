@@ -56,6 +56,7 @@ class RDoc::Generator::Tags
   def self.setup_options options
     options.force_output = true
     options.op_dir = '.'
+    options.update_output_dir = false
 
     options.extend Options
 

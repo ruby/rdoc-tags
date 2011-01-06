@@ -1,5 +1,5 @@
 require 'rubygems'
-gem 'rdoc', '~> 3'
+gem 'rdoc', '~> 3.4'
 
 require 'minitest/autorun'
 require 'rdoc/rdoc'
@@ -79,6 +79,7 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
     assert_includes op.top.long, 'ctags-path'
     assert_includes op.top.long, 'ctags-merge'
     assert_includes op.top.long, 'tag-style'
+    refute options.update_output_dir
   end
 
   def test_find_ctags
