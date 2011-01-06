@@ -77,7 +77,7 @@ class RDoc::Generator::Tags
 
     op.on('--ctags-path=PATH',
           'Path to Exuberant Ctags',
-          'This will be auto-discovered from PATH',) do |value|
+          'This will be auto-discovered from PATH') do |value|
       options.ctags_path = value
     end
 
