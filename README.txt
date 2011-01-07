@@ -1,6 +1,7 @@
 = rdoc-tags
 
 * https://github.com/rdoc/rdoc-tags
+* http://rdoc.rubyforge.org/rdoc-tags
 
 == DESCRIPTION:
 
