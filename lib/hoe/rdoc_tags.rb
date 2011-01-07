@@ -24,15 +24,23 @@ module Hoe::RDoc_tags
   # Hoe.
 
   def define_rdoc_tags_tasks
+    ctags_merge = false
+    ctags_path  = nil
+
     with_config do |config, _|
-      tag_style = config['tag_style']
+      tag_style   = config['tag_style']
+      ctags_merge = config['ctags_merge'] if config.key? 'ctags_merge'
+      ctags_path  = config['ctags_path']
     end
 
     tag_style ||= 'vim'
 
     RDoc::TagsTask.new do |rd|
       rd.files += spec.require_paths
-      rd.tag_style = tag_style
+
+      rd.tag_style   = tag_style
+      rd.ctags_merge = ctags_merge
+      rd.ctags_path  = ctags_path
     end
 
     task :clean   => :clobber_tags

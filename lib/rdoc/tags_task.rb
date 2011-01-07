@@ -34,6 +34,17 @@ require 'rdoc'
 class RDoc::TagsTask < Rake::TaskLib
 
   ##
+  # Merge Exuberant Ctags output with our own.  See RDoc::Generator::Tags
+
+  attr_accessor :ctags_merge
+
+  ##
+  # Path to Exuberant Ctags.  ctags will be found automatically if this is not
+  # set.  See RDoc::Generator::Tags
+
+  attr_accessor :ctags_path
+
+  ##
   # Rake::FileList of files to be used for tag generation.
   #
   # Your gem's require paths are probably sufficient.
@@ -71,6 +82,9 @@ class RDoc::TagsTask < Rake::TaskLib
     @tags_file = 'TAGS'
     @tag_style = 'vim'
 
+    @ctags_merge = false
+    @ctags_path  = nil
+
     yield self if block_given?
 
     define
@@ -85,15 +99,26 @@ class RDoc::TagsTask < Rake::TaskLib
 
     options = RDoc::Options.new
     options.setup_generator 'tags'
+
     options.tag_style = @tag_style
+
+    options.ctags_merge = @ctags_merge
+    options.ctags_path  = @ctags_path
 
     options.files = @files
 
-    options.op_dir    = @tags_dir
+    options.op_dir = @tags_dir
     options.verbosity = 0
 
     if Rake.application.options.trace then
-      $stderr.puts "rdoc -q -o #{@tags_dir} -f tags #{@files}"
+      options.verbosity = 1
+
+      # TODO RDoc::Options#to_argv?
+      ctags_merge = " --ctags-merge" if @ctags_merge
+      ctags_path = " --ctags_path=#{@ctags_path}" if @ctags_path
+      ctags = "#{ctags_merge}#{ctags_path}"
+
+      $stderr.puts "rdoc -o #{@tags_dir} -f tags#{ctags} #{@files}"
     end
 
     RDoc::RDoc.new.document options
