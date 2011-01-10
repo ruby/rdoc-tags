@@ -87,9 +87,7 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
   end
 
   def test_generate_emacs
-    skip "test incomplete"
-
-    @options.tag_style = :emacs
+    @g.tag_style = :emacs
 
     @g.generate [@top_level]
 
@@ -97,46 +95,35 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
 
     assert File.file? tags_file
 
-    tags = File.read(tags_file).lines
+    tags = open tags_file, 'rb' do |io| io.read end.lines
 
-    assert_equal "!_TAG_FILE_FORMAT\t2\n", tags.next
-    assert_equal "!_TAG_FILE_SORTED\t1\n", tags.next
-    assert_equal "!_TAG_PROGRAM_AUTHOR\tEric Hodel\t/drbrain@segment7.net/\n",
-                 tags.next
-    assert_equal "!_TAG_PROGRAM_NAME\trdoc-tags\n", tags.next
-    assert_equal "!_TAG_PROGRAM_URL\thttp://rdoc.rubyforge.org/rdoc-tags\n",
-                 tags.next
-    assert_equal "!_TAG_PROGRAM_VERSION\t#{RDoc::Generator::Tags::VERSION}\n",
-                 tags.next
+    assert_equal "\f\n",          tags.next
+    assert_equal "file.rb,192\n", tags.next
 
-    assert_equal "A\tfile.rb\t/class A/;\"\tc\n",                tags.next
-    assert_equal "A::B\tfile.rb\t/class \\(A::\\)\\?B/;\"\tc\n", tags.next
-    assert_equal "B\tfile.rb\t/class \\(A::\\)\\?B/;\"\tc\n",    tags.next
+    assert_equal "\x7Ffile.rb\x010,0\n", tags.next
 
-    assert_equal "CONST\tfile.rb\t/CONST\\s\\*=/;\"\td\tclass:Object\n", tags.next
+    assert_equal "CONST\x7FCONST\x010,0\n", tags.next
 
-    assert_equal "Object\tfile.rb\t/class Object/;\"\tc\n", tags.next
+    assert_equal "attr_accessor :attr\x7Fattr\x010,0\n", tags.next
 
-    assert_equal "attr\tfile.rb\t/attr\\w\\*\\s\\*\\[:'\"]attr/;\"\tf\tclass:Object\n",
-                 tags.next
-    assert_equal "attr=\tfile.rb\t/attr\\w\\*\\s\\*\\[:'\"]attr/;\"\tf\tclass:Object\n",
-                 tags.next
+    assert_equal "class A\x7FA\x010,0\n",           tags.next
+    assert_equal "class A::B\x7FA::B\x010,0\n",     tags.next
+    assert_equal "class Object\x7FObject\x010,0\n", tags.next
 
-    assert_equal "file.rb\tfile.rb\t0;\"\tF\n", tags.next
+    assert_equal "def method\x7Fmethod\x010,0\n",          tags.next
+    assert_equal "def method!\x7Fmethod!\x010,0\n",        tags.next
+    assert_equal "def self.s_method\x7Fs_method\x010,0\n", tags.next
 
-    assert_equal "method\tfile.rb\t/def method/;\"\tf\tclass:Object\n",
-                 tags.next
-    assert_equal "method!\tfile.rb\t/def method!/;\"\tf\tclass:Object\n",
-                 tags.next
+    assert_equal "\f\n",           tags.next
+    assert_equal "file_2.rb,25\n", tags.next
 
-    assert_equal "s_method\tfile.rb\t/def \\[A-Za-z0-9_:]\\+.s_method/;\"\tf\tclass:Object\n",
-                 tags.next
+    assert_equal "class A::B::A\x7FA::B::A\x010,0\n", tags.next
 
     assert_raises StopIteration do line = tags.next; flunk line end
   end
 
   def test_generate_vim
-    @options.tag_style = :vim
+    @g.tag_style = :vim
 
     @g.generate [@top_level]
 
@@ -186,7 +173,8 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
     assert_raises StopIteration do line = tags.next; flunk line end
   end
 
-  def test_generate_dry_run
+  def test_generate_dry_run_vim
+    @options.tag_style = :vim
     @options.dry_run = true
     @g = RDoc::Generator::Tags.new @options
 

@@ -1,5 +1,7 @@
 ##
-# A TAGS file generator based on http://ctags.sourceforge.net/FORMAT
+# A TAGS file generator for vim-style tags (based on
+# http://ctags.sourceforge.net/FORMAT) and emacs-style tags.  Tags is
+# compatible with Exuberant Ctags for merging tag definitions.
 #
 # This file will be automatically loaded via rdoc/discover.rb.  If you wish to
 # load this standalone, require 'rdoc/rdoc' first.
@@ -9,7 +11,7 @@ class RDoc::Generator::Tags
   ##
   # The version of the tags generator you are using
 
-  VERSION = '1.2'
+  VERSION = '1.3'
 
   RDoc::RDoc.add_generator self
 
@@ -21,7 +23,10 @@ class RDoc::Generator::Tags
     ##
     # Valid tag styles
 
-    TAG_STYLES = [:vim]
+    TAG_STYLES = [
+      :emacs,
+      :vim
+    ]
 
     ##
     # Merge ctags-generated tags onto our own?
@@ -49,6 +54,11 @@ class RDoc::Generator::Tags
   # Path to Exuberant Ctags
 
   attr_accessor :ctags_path
+
+  ##
+  # Output tag style.  See Options::TAG_STYLES for allowed values
+
+  attr_accessor :tag_style
 
   ##
   # Adds tags-generator options to the RDoc::Options instance +options+
@@ -98,11 +108,10 @@ class RDoc::Generator::Tags
   def initialize options
     @options = options
 
+    @tag_style   = options.tag_style
     @ctags_merge = options.ctags_merge
     @ctags_path  = options.ctags_path
     @dry_run     = options.dry_run
-
-    @tags = Hash.new { |h, name| h[name] = [] }
   end
 
   ##
@@ -129,8 +138,65 @@ class RDoc::Generator::Tags
   # Generates a TAGS file from +top_levels+
 
   def generate top_levels
+    case @tag_style
+    when :vim   then generate_vim top_levels
+    when :emacs then generate_emacs top_levels
+    else
+      raise RDoc::Error, "Unkown tag format #{@tag_style.inspect}"
+    end
+  end
+
+  ##
+  # Generates a TAGS file from +top_levels+ for emacs
+
+  def generate_emacs top_levels
+    # file_name => [definition, tag_name, line_number, byte_offset]
+    tags = Hash.new { |h, file| h[file] = [] }
+
     top_levels.each do |top_level|
-      @tags[top_level.relative_name] << [top_level.relative_name, 0, 'F']
+      tags[top_level.relative_name] << ['', top_level.relative_name, 0, 0]
+    end
+
+    RDoc::TopLevel.all_classes_and_modules.each do |klass|
+      klass.in_files.each do |file|
+        tags[file.relative_name] << [klass.definition, klass.full_name, 0, 0]
+      end
+
+      klass.each_attribute do |attr|
+        tags[attr.file.relative_name] <<
+          ["#{attr.definition} :#{attr.name}", attr.name, 0, 0]
+      end
+
+      klass.each_constant do |constant|
+        tags[constant.file.relative_name] <<
+          [constant.name, constant.name, 0, 0]
+      end
+
+      klass.each_method do |method|
+        definition = if method.singleton then
+                       "def self.#{method.name}"
+                     else
+                       "def #{method.name}"
+                     end
+
+        tags[method.file.relative_name] << [definition, method.name, 0, 0]
+      end
+    end
+
+    unless @dry_run then
+      write_tags_emacs tags
+      merge_ctags
+    end
+  end
+
+  ##
+  # Generates a TAGS file from +top_levels+ for vim
+
+  def generate_vim top_levels
+    tags = Hash.new { |h, name| h[name] = [] }
+
+    top_levels.each do |top_level|
+      tags[top_level.relative_name] << [top_level.relative_name, 0, 'F']
     end
 
     RDoc::TopLevel.all_classes_and_modules.each do |klass|
@@ -144,8 +210,8 @@ class RDoc::Generator::Tags
         end
 
       klass.in_files.each do |file|
-        @tags[klass.full_name] << [file.relative_name, address, 'c']
-        @tags[klass.name]      << [file.relative_name, address, 'c']
+        tags[klass.full_name] << [file.relative_name, address, 'c']
+        tags[klass.name]      << [file.relative_name, address, 'c']
       end
 
       klass.each_attribute do |attr|
@@ -156,12 +222,12 @@ class RDoc::Generator::Tags
           kind
         ]
 
-        @tags[attr.name]       << where
-        @tags["#{attr.name}="] << where
+        tags[attr.name]       << where
+        tags["#{attr.name}="] << where
       end
 
       klass.each_constant do |constant|
-        @tags[constant.name] << [
+        tags[constant.name] << [
           constant.file.relative_name, "/#{constant.name}\\s\\*=/", 'd', kind]
       end
 
@@ -173,13 +239,13 @@ class RDoc::Generator::Tags
                     "/def #{method.name}/"
                   end
 
-        @tags[method.name] << [
+        tags[method.name] << [
           method.file.relative_name, address, 'f', kind]
       end
     end
 
     unless @dry_run then
-      write_tags
+      write_tags_vim tags
       merge_ctags
     end
   end
@@ -197,9 +263,28 @@ class RDoc::Generator::Tags
   end
 
   ##
-  # Writes the TAGS file
+  # Writes the TAGS file in emacs style using the data in +tags+
 
-  def write_tags
+  def write_tags_emacs tags
+    open 'TAGS', 'wb' do |io|
+      tags.sort.each do |file, definitions|
+        section = []
+
+        definitions.sort.each do |(definition, tag_name, line, offset)|
+          section << "#{definition}\x7F#{tag_name}\x01#{line},#{offset}"
+        end
+
+        section = section.join "\n"
+
+        io << "\x0C\n#{file},#{section.length}\n#{section}\n"
+      end
+    end
+  end
+
+  ##
+  # Writes the TAGS file in vim style using the data in +tags+
+
+  def write_tags_vim tags
     open 'TAGS', 'w' do |io|
       io.write <<-INFO
 !_TAG_FILE_FORMAT\t2\t/extended format/
@@ -210,7 +295,7 @@ class RDoc::Generator::Tags
 !_TAG_PROGRAM_VERSION\t#{VERSION}\t//
       INFO
 
-      @tags.sort.each do |name, definitions|
+      tags.sort.each do |name, definitions|
         definitions.uniq.each do |(file, address, *field)|
           io.write "#{name}\t#{file}\t#{address};\"\t#{field.join "\t"}\n"
         end

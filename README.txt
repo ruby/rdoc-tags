@@ -5,9 +5,9 @@
 
 == DESCRIPTION:
 
-A TAGS file generator based on http://ctags.sourceforge.net/FORMAT.  rdoc-tags
-handles namespaced classes and modules, ! and ? methods, constants and
-attributes better than Exuberant Ctags.
+A TAGS file generator that builds both vim and emacs style tags files. Vim
+tags are based on http://ctags.sourceforge.net/FORMAT).  rdoc-tags is
+compatible with Exuberant Ctags for merging tag definitions.
 
 rdoc-tags includes a Hoe plugin +:rdoc_tags+ making it easy to add tag support
 to your ruby project.  If you don't use Hoe you can instead use RDoc::TagsTask
@@ -16,12 +16,16 @@ to add rake tasks for building TAGS to your ruby project.
 == FEATURES/PROBLEMS:
 
 * Much slower that Exuberant Ctags
-* Only outputs vim-format tags
-* Only works for ruby files, not Ruby/C files
 
 == SYNOPSIS:
 
+Vim-style tags:
+
   rdoc -f tags lib
+
+Emacs-style tags:
+
+  rdoc -f tags --tag-style=emacs lib
 
 == REQUIREMENTS:
 
