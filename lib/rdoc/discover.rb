@@ -1,5 +1,5 @@
 begin
-  gem 'rdoc', '~> 3.4'
+  gem 'rdoc', '>= 4.0.0.preview2', '< 5'
   require 'rdoc/generator'
   require 'rdoc/generator/tags'
 rescue Gem::LoadError

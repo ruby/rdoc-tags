@@ -11,7 +11,7 @@ class RDoc::Generator::Tags
   ##
   # The version of the tags generator you are using
 
-  VERSION = '1.3'
+  VERSION = '1.3.pre'
 
   RDoc::RDoc.add_generator self
 
@@ -81,7 +81,7 @@ class RDoc::Generator::Tags
     op.on('--[no-]ctags-merge',
           'Merge exuberant ctags with our own?',
           'Use this for projects with C extensions') do |value|
-      options.ctags_path = value
+      options.ctags_merge = value
     end
 
     op.separator nil
@@ -105,7 +105,8 @@ class RDoc::Generator::Tags
   ##
   # Creates a new tags generator
 
-  def initialize options
+  def initialize store, options
+    @store = store
     @options = options
 
     @tag_style   = options.tag_style
@@ -157,7 +158,7 @@ class RDoc::Generator::Tags
       tags[top_level.relative_name] << ['', top_level.relative_name, 0, 0]
     end
 
-    RDoc::TopLevel.all_classes_and_modules.each do |klass|
+    @store.all_classes_and_modules.each do |klass|
       klass.in_files.each do |file|
         tags[file.relative_name] << [klass.definition, klass.full_name, 0, 0]
       end
@@ -199,7 +200,7 @@ class RDoc::Generator::Tags
       tags[top_level.relative_name] << [top_level.relative_name, 0, 'F']
     end
 
-    RDoc::TopLevel.all_classes_and_modules.each do |klass|
+    @store.all_classes_and_modules.each do |klass|
       kind = "class:#{klass.full_name}"
 
       address =
@@ -258,8 +259,23 @@ class RDoc::Generator::Tags
 
     ctags_path = @ctags_path || find_ctags
 
-    system(ctags_path, '--append=yes', '--format=2', '--languages=-Ruby',
-           '--recurse=yes', *@options.files)
+    ctags_args = [
+      '--append=yes',
+      '--format=2',
+      '--languages=-Ruby',
+      '--recurse=yes',
+      *@options.files
+    ]
+
+    ctags_args.unshift '-e' if @tag_style == :emacs
+
+    unless @options.quiet then
+      puts
+      puts 'Merging with Exuberant Ctags'
+      puts "#{ctags_path} #{ctags_args.join ' '}"
+    end
+
+    system ctags_path, *ctags_args
   end
 
   ##

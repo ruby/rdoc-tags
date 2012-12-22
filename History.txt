@@ -3,6 +3,9 @@
 * Minor enhancements
   * rdoc-tags now supports outputting emacs-style tags.  <tt>rdoc -f tags
     --tag-style=emacs .</tt> will write an emacs-style tags file.
+* Bug fixes
+  * Set ctags_merge option correctly in option parser
+  * Hoe task no longer removes TAGS on clean
 
 === 1.2 / 2011-01-06
 

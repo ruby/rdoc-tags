@@ -1,5 +1,5 @@
 require 'rubygems'
-gem 'rdoc', '~> 3.4'
+gem 'rdoc', '>= 4.0.0.preview2', '< 5'
 
 require 'minitest/autorun'
 require 'rdoc/rdoc'
@@ -14,15 +14,15 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
     @options.extend RDoc::Generator::Tags::Options
 
     @pwd = Dir.pwd
-    RDoc::TopLevel.reset
 
     @tmpdir = File.join Dir.tmpdir, "test_rdoc_generator_tags_#{$$}"
     FileUtils.mkdir_p @tmpdir
     Dir.chdir @tmpdir
 
-    @g = RDoc::Generator::Tags.new @options
+    @store = RDoc::Store.new
+    @g = RDoc::Generator::Tags.new @store, @options
 
-    @top_level = RDoc::TopLevel.new 'file.rb'
+    @top_level = @store.add_file 'file.rb'
 
     @klass = @top_level.add_class RDoc::NormalClass, 'Object'
     @klass.record_location @top_level
@@ -95,7 +95,7 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
 
     assert File.file? tags_file
 
-    tags = open tags_file, 'rb' do |io| io.read end.lines
+    tags = open tags_file, 'rb' do |io| io.read end.each_line
 
     assert_equal "\f\n",          tags.next
     assert_equal "file.rb,192\n", tags.next
@@ -131,7 +131,7 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
 
     assert File.file? tags_file
 
-    tags = File.read(tags_file).lines
+    tags = File.read(tags_file).each_line
 
     assert_equal "!_TAG_FILE_FORMAT\t2\t/extended format/\n", tags.next
     assert_equal "!_TAG_FILE_SORTED\t1\t/sorted/\n", tags.next
@@ -176,7 +176,7 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
   def test_generate_dry_run_vim
     @options.tag_style = :vim
     @options.dry_run = true
-    @g = RDoc::Generator::Tags.new @options
+    @g = RDoc::Generator::Tags.new @store, @options
 
     @g.generate [@top_level]
 
@@ -190,7 +190,9 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
 
     @g.instance_variable_set :@system, nil
 
-    @g.merge_ctags
+    assert_silent do
+      @g.merge_ctags
+    end
 
     assert_nil @g.instance_variable_get :@system
 
@@ -198,7 +200,9 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
     @g.ctags_path = 'ctags'
     @options.files = '.'
 
-    @g.merge_ctags
+    capture_io do
+      @g.merge_ctags
+    end
 
     args = @g.instance_variable_get :@system
 
