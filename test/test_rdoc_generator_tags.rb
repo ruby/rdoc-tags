@@ -15,11 +15,12 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
 
     @pwd = Dir.pwd
 
-    @tmpdir = File.join Dir.tmpdir, "test_rdoc_generator_tags_#{$$}"
+    @tmpdir = File.join Dir.tmpdir, "test_rdoc_generator_tags_#{$$}/.rdoc"
     FileUtils.mkdir_p @tmpdir
     Dir.chdir @tmpdir
 
     @store = RDoc::Store.new
+    @store.path = @tmpdir
     @g = RDoc::Generator::Tags.new @store, @options
 
     @top_level = @store.add_file 'file.rb'
@@ -79,7 +80,7 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
     assert_includes op.top.long, 'ctags-path'
     assert_includes op.top.long, 'ctags-merge'
     assert_includes op.top.long, 'tag-style'
-    refute options.update_output_dir
+    assert options.update_output_dir
   end
 
   def test_find_ctags
@@ -91,9 +92,10 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
 
     @g.generate
 
-    tags_file = File.join @tmpdir, 'TAGS'
+    tags_file = File.join @tmpdir, '../TAGS'
 
     assert File.file? tags_file
+    assert File.file? File.join(@tmpdir, 'cache.ri')
 
     tags = open tags_file, 'rb' do |io| io.read end.each_line
 
@@ -127,9 +129,10 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
 
     @g.generate
 
-    tags_file = File.join @tmpdir, 'TAGS'
+    tags_file = File.join @tmpdir, '../TAGS'
 
     assert File.file? tags_file
+    assert File.file? File.join(@tmpdir, 'cache.ri')
 
     tags = File.read(tags_file).each_line
 

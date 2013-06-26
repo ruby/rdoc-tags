@@ -1,5 +1,6 @@
 *.rbc
 *.swp
+/.rdoc
 /TAGS
 /doc
 /pkg

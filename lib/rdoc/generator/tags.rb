@@ -64,9 +64,10 @@ class RDoc::Generator::Tags
   # Adds tags-generator options to the RDoc::Options instance +options+
 
   def self.setup_options options
-    options.force_output = true
-    options.op_dir = '.'
-    options.update_output_dir = false
+    options.force_output = !File.exist?('TAGS')
+    options.force_update = false
+    options.op_dir = File.expand_path './.rdoc'
+    options.update_output_dir = true
 
     options.extend Options
 
@@ -139,6 +140,8 @@ class RDoc::Generator::Tags
   # Generates a TAGS file
 
   def generate
+    @store.save unless @dry_run
+
     case @tag_style
     when :vim   then generate_vim
     when :emacs then generate_emacs
@@ -282,7 +285,7 @@ class RDoc::Generator::Tags
   # Writes the TAGS file in emacs style using the data in +tags+
 
   def write_tags_emacs tags
-    open 'TAGS', 'wb' do |io|
+    open '../TAGS', 'wb' do |io|
       tags.sort.each do |file, definitions|
         section = []
 
@@ -301,7 +304,7 @@ class RDoc::Generator::Tags
   # Writes the TAGS file in vim style using the data in +tags+
 
   def write_tags_vim tags
-    open 'TAGS', 'w' do |io|
+    open '../TAGS', 'w' do |io|
       io.write <<-INFO
 !_TAG_FILE_FORMAT\t2\t/extended format/
 !_TAG_FILE_SORTED\t1\t/sorted/

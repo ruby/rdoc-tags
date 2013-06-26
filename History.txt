@@ -1,8 +1,10 @@
 === 1.3
 
 * Minor enhancements
+  * rdoc-tags will now only re-parse files that have changed.
   * rdoc-tags now supports outputting emacs-style tags.  <tt>rdoc -f tags
     --tag-style=emacs .</tt> will write an emacs-style tags file.
+
 * Bug fixes
   * Set ctags_merge option correctly in option parser
   * Hoe task no longer removes TAGS on clean
@@ -17,7 +19,7 @@
 * Bug Fixes
   * Fixed Hoe plugin to match RDoc::TagsTask arguments.
   * Require rdoc/generator/tags first for RDoc::TagsTask.
-  * The tags generator no longer creates a create.rid file.
+  * The tags generator no longer creates a created.rid file.
 
 === 1.1 / 2010-12-29
 
