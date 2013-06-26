@@ -13,8 +13,7 @@ Hoe.plugin :travis
 Hoe.spec 'rdoc-tags' do
   developer 'Eric Hodel', 'drbrain@segment7.net'
 
-  extra_deps << ['rdoc', '>= 4.0.0.preview2', '< 5']
-  extra_dev_deps << ['ZenTest']
+  dependency 'rdoc', '~> 4'
 
   rdoc_locations <<
     'drbrain@rubyforge.org:/var/www/gforge-projects/rdoc/rdoc-tags'

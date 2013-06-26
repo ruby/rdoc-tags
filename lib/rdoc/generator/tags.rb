@@ -136,25 +136,25 @@ class RDoc::Generator::Tags
   end
 
   ##
-  # Generates a TAGS file from +top_levels+
+  # Generates a TAGS file
 
-  def generate top_levels
+  def generate
     case @tag_style
-    when :vim   then generate_vim top_levels
-    when :emacs then generate_emacs top_levels
+    when :vim   then generate_vim
+    when :emacs then generate_emacs
     else
       raise RDoc::Error, "Unkown tag format #{@tag_style.inspect}"
     end
   end
 
   ##
-  # Generates a TAGS file from +top_levels+ for emacs
+  # Generates an emacs TAGS file
 
-  def generate_emacs top_levels
+  def generate_emacs
     # file_name => [definition, tag_name, line_number, byte_offset]
     tags = Hash.new { |h, file| h[file] = [] }
 
-    top_levels.each do |top_level|
+    @store.all_files.each do |top_level|
       tags[top_level.relative_name] << ['', top_level.relative_name, 0, 0]
     end
 
@@ -191,12 +191,12 @@ class RDoc::Generator::Tags
   end
 
   ##
-  # Generates a TAGS file from +top_levels+ for vim
+  # Generates a vim TAGS file
 
-  def generate_vim top_levels
+  def generate_vim
     tags = Hash.new { |h, name| h[name] = [] }
 
-    top_levels.each do |top_level|
+    @store.all_files.each do |top_level|
       tags[top_level.relative_name] << [top_level.relative_name, 0, 'F']
     end
 

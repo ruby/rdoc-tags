@@ -89,7 +89,7 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
   def test_generate_emacs
     @g.tag_style = :emacs
 
-    @g.generate [@top_level]
+    @g.generate
 
     tags_file = File.join @tmpdir, 'TAGS'
 
@@ -125,7 +125,7 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
   def test_generate_vim
     @g.tag_style = :vim
 
-    @g.generate [@top_level]
+    @g.generate
 
     tags_file = File.join @tmpdir, 'TAGS'
 
@@ -178,7 +178,7 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
     @options.dry_run = true
     @g = RDoc::Generator::Tags.new @store, @options
 
-    @g.generate [@top_level]
+    @g.generate
 
     refute File.exist? File.join(@tmpdir, 'TAGS')
   end
