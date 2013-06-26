@@ -11,7 +11,7 @@ class RDoc::Generator::Tags
   ##
   # The version of the tags generator you are using
 
-  VERSION = '1.3.pre'
+  VERSION = '1.3'
 
   RDoc::RDoc.add_generator self
 
