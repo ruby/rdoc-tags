@@ -7,7 +7,7 @@ $:.unshift 'lib' # allow rdoc-tags to tag itself
 
 Hoe.plugin :git
 Hoe.plugin :minitest
-Hoe.plugin :rdoc_tags
+Hoe.plugin :rdoc_tags unless ENV['TRAVIS']
 Hoe.plugin :travis
 
 Hoe.spec 'rdoc-tags' do
