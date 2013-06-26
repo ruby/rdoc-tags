@@ -315,7 +315,13 @@ class RDoc::Generator::Tags
       INFO
 
       tags.sort.each do |name, definitions|
-        definitions.uniq.each do |(file, address, *field)|
+        definitions = definitions.uniq
+
+        definitions = definitions.sort_by do |(file, address,*_)|
+          [file, address]
+        end
+
+        definitions.each do |(file, address, *field)|
           io.write "#{name}\t#{file}\t#{address};\"\t#{field.join "\t"}\n"
         end
       end
