@@ -83,7 +83,7 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
   end
 
   def test_find_ctags
-    assert_equal '/usr/local/bin/ctags', @g.find_ctags
+    assert_match 'ctags', @g.find_ctags
   end
 
   def test_generate_emacs
