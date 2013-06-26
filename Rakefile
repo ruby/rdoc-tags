@@ -8,7 +8,7 @@ $:.unshift 'lib' # allow rdoc-tags to tag itself
 Hoe.plugin :git
 Hoe.plugin :minitest
 Hoe.plugin :rdoc_tags
-Hoe.plugins.delete :rubyforge
+Hoe.plugin :travis
 
 Hoe.spec 'rdoc-tags' do
   developer 'Eric Hodel', 'drbrain@segment7.net'
