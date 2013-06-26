@@ -84,6 +84,8 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
   end
 
   def test_find_ctags
+    skip 'no ctags on travis' if ENV['TRAVIS']
+
     assert_match 'ctags', @g.find_ctags
   end
 
