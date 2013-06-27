@@ -20,15 +20,31 @@ to add rake tasks for building TAGS to your ruby project.
 * Generates emacs-format tags
 * Slower than Exuberant Ctags on the first run
 
-== Synopsis
+== Examples
 
-Vim-style tags:
+Vim-style tags from the command line:
 
   rdoc -f tags lib
 
-Emacs-style tags:
+Emacs-style tags from the command line:
 
   rdoc -f tags --tag-style=emacs lib
+
+For hoe projects you can add the tags plugin to all your projects by adding
+the following to ~/.hoerc:
+
+  plugins:
+  - rdoc_tags
+
+There is also a rake task you can add to your Rakefile:
+
+  require 'rdoc/tags_task'
+
+  RDoc::TagsTask.new do |t|
+    t.tag_style = 'vim' # default
+  end
+
+And use <code>rake tags</code> to generate a TAGS file.
 
 == Requirements
 
