@@ -143,10 +143,10 @@ class RDoc::Generator::Tags
     @store.save unless @dry_run
 
     case @tag_style
-    when :vim   then generate_vim
-    when :emacs then generate_emacs
+    when 'vim',   :vim   then generate_vim
+    when 'emacs', :emacs then generate_emacs
     else
-      raise RDoc::Error, "Unkown tag format #{@tag_style.inspect}"
+      raise RDoc::Error, "Unkown tag style #{@tag_style.inspect}"
     end
   end
 

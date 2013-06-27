@@ -62,7 +62,7 @@ class RDoc::TagsTask < Rake::TaskLib
   attr_accessor :tags_file
 
   ##
-  # Tag style to output.  Defaults to vim.
+  # Tag style to output.  Defaults to vim, emacs is also supported.
 
   attr_accessor :tag_style
 
