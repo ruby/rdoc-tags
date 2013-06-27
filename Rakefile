@@ -16,9 +16,9 @@ Hoe.spec 'rdoc-tags' do
   dependency 'rdoc', '~> 4'
 
   rdoc_locations <<
-    'drbrain@rubyforge.org:/var/www/gforge-projects/rdoc/rdoc-tags'
-  rdoc_locations <<
     'docs.seattlerb.org:/data/www/docs.seattlerb.org/rdoc-tags'
+  rdoc_locations <<
+    'drbrain@rubyforge.org:/var/www/gforge-projects/rdoc/rdoc-tags'
 end
 
 # vim: syntax=Ruby
