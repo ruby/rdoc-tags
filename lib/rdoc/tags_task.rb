@@ -77,7 +77,7 @@ class RDoc::TagsTask < Rake::TaskLib
     @retag_task   = names[:retag]   || 'retag'
     @tags_task    = names[:tags]    || 'tags'
 
-    @files     = Rake::FileList.new
+    @files     = Rake::FileList.new 'lib/**/*.rb'
     @tags_dir  = './.rdoc'
     @tags_file = 'TAGS'
     @tag_style = 'vim'
@@ -141,7 +141,7 @@ class RDoc::TagsTask < Rake::TaskLib
 
     directory @tags_dir
 
-    file @tags_file => [@tags_dir, Rake.application.rakefile, @files] do
+    file @tags_file => [@tags_dir, Rake.application.rakefile, *@files] do
       build_tags
     end
 
