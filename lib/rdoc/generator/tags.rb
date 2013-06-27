@@ -278,7 +278,9 @@ class RDoc::Generator::Tags
       puts "#{ctags_path} #{ctags_args.join ' '}"
     end
 
-    system ctags_path, *ctags_args
+    Dir.chdir '..' do
+      system ctags_path, *ctags_args
+    end
   end
 
   ##

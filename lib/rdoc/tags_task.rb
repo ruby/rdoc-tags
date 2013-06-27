@@ -78,7 +78,7 @@ class RDoc::TagsTask < Rake::TaskLib
     @tags_task    = names[:tags]    || 'tags'
 
     @files     = Rake::FileList.new
-    @tags_dir  = '.'
+    @tags_dir  = './.rdoc'
     @tags_file = 'TAGS'
     @tag_style = 'vim'
 
