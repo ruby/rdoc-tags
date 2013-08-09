@@ -13,7 +13,7 @@ Hoe.plugin :travis
 Hoe.spec 'rdoc-tags' do
   developer 'Eric Hodel', 'drbrain@segment7.net'
 
-  dependency 'rdoc', '~> 4'
+  dependency 'rdoc', '~> 4.1'
 
   rdoc_locations <<
     'docs.seattlerb.org:/data/www/docs.seattlerb.org/rdoc-tags'

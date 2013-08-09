@@ -37,6 +37,10 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
     @meth = RDoc::AnyMethod.new nil, 'method'
     @meth.record_location @top_level
 
+    @nodoc = RDoc::AnyMethod.new nil, 'nodoc'
+    @nodoc.record_location @top_level
+    @nodoc.document_self = false
+
     @meth_bang = RDoc::AnyMethod.new nil, 'method!'
     @meth_bang.record_location @top_level
 
@@ -51,6 +55,7 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
     @const.record_location @top_level
 
     @klass.add_method @meth
+    @klass.add_method @nodoc
     @klass.add_method @smeth
     @klass.add_method @meth_bang
     @klass.add_attribute @attr
@@ -102,7 +107,7 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
     tags = open tags_file, 'rb' do |io| io.read end.each_line
 
     assert_equal "\f\n",          tags.next
-    assert_equal "file.rb,192\n", tags.next
+    assert_equal "file.rb,212\n", tags.next
 
     assert_equal "\x7Ffile.rb\x010,0\n", tags.next
 
@@ -116,6 +121,7 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
 
     assert_equal "def method\x7Fmethod\x010,0\n",          tags.next
     assert_equal "def method!\x7Fmethod!\x010,0\n",        tags.next
+    assert_equal "def nodoc\x7Fnodoc\x010,0\n",            tags.next
     assert_equal "def self.s_method\x7Fs_method\x010,0\n", tags.next
 
     assert_equal "\f\n",           tags.next
@@ -170,6 +176,8 @@ class TestRDocGeneratorTags < MiniTest::Unit::TestCase
     assert_equal "method\tfile.rb\t/def method/;\"\tf\tclass:Object\n",
                  tags.next
     assert_equal "method!\tfile.rb\t/def method!/;\"\tf\tclass:Object\n",
+                 tags.next
+    assert_equal "nodoc\tfile.rb\t/def nodoc/;\"\tf\tclass:Object\n",
                  tags.next
 
     assert_equal "s_method\tfile.rb\t/def \\[A-Za-z0-9_:]\\+.s_method/;\"\tf\tclass:Object\n",

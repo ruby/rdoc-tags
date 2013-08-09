@@ -68,6 +68,7 @@ class RDoc::Generator::Tags
     options.force_update = false
     options.op_dir = File.expand_path './.rdoc'
     options.update_output_dir = true
+    options.visibility = :nodoc
 
     options.extend Options
 
@@ -120,7 +121,7 @@ class RDoc::Generator::Tags
   # Finds the first Exuberant Ctags in ENV['PATH'] by checking <tt>ctags
   # --version</tt>.  Other implementations are ignored.
 
-  def find_ctags
+  def find_ctags # :nodoc:
     require 'open3'
 
     ENV['PATH'].split(File::PATH_SEPARATOR).each do |dir|
@@ -153,7 +154,7 @@ class RDoc::Generator::Tags
   ##
   # Generates an emacs TAGS file
 
-  def generate_emacs
+  def generate_emacs # :nodoc:
     # file_name => [definition, tag_name, line_number, byte_offset]
     tags = Hash.new { |h, file| h[file] = [] }
 
@@ -196,7 +197,7 @@ class RDoc::Generator::Tags
   ##
   # Generates a vim TAGS file
 
-  def generate_vim
+  def generate_vim # :nodoc:
     tags = Hash.new { |h, name| h[name] = [] }
 
     @store.all_files.each do |top_level|
@@ -257,7 +258,7 @@ class RDoc::Generator::Tags
   ##
   # Merges our tags with Exuberant Ctags' tags
 
-  def merge_ctags
+  def merge_ctags # :nodoc:
     return unless @ctags_merge
 
     ctags_path = @ctags_path || find_ctags
@@ -286,7 +287,7 @@ class RDoc::Generator::Tags
   ##
   # Writes the TAGS file in emacs style using the data in +tags+
 
-  def write_tags_emacs tags
+  def write_tags_emacs tags # :nodoc:
     open '../TAGS', 'wb' do |io|
       tags.sort.each do |file, definitions|
         section = []
@@ -305,7 +306,7 @@ class RDoc::Generator::Tags
   ##
   # Writes the TAGS file in vim style using the data in +tags+
 
-  def write_tags_vim tags
+  def write_tags_vim tags # :nodoc:
     open '../TAGS', 'w' do |io|
       io.write <<-INFO
 !_TAG_FILE_FORMAT\t2\t/extended format/
